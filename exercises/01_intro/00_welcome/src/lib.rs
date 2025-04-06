@@ -4,7 +4,7 @@
 // Comments are ignored by the compiler; you can leverage them to annotate code with notes and
 // explanations.
 // There are various ways to write comments in Rust, each with its own purpose.
-// For now we'll stick to the most common one: the line comment.
+// For now, we'll stick to the most common one: the line comment.
 // Everything from `//` to the end of the line is considered a comment.
 
 // Exercises will include `TODO`, `todo!()` or `__` markers to draw your attention to the lines
@@ -17,7 +17,7 @@
 // You can also find solutions to all exercises in the `solutions` git branch.
 fn greeting() -> &'static str {
     // TODO: fix me 👇
-    "I'm ready to __!"
+    "I'm ready to learn Rust!"
 }
 
 // Your solutions will be automatically verified by a set of tests.
