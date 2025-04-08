@@ -9,12 +9,21 @@
 // If the compared type doesn't implement `Debug`, it doesn't know how to represent them!
 
 #[derive(PartialEq)]
+#[derive(Debug)]
 struct Ticket {
     title: String,
     description: String,
     status: String,
 }
+trait Debug {
+    fn debug(&self);
+}
 
+impl Debug for Ticket {
+    fn debug(&self) {
+        println!("{:?}", self);
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
