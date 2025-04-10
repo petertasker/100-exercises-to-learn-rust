@@ -4,6 +4,13 @@
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn sum(nums: &[u32]) -> u32 {
+       let mut sum = 0;
+        for num in nums {
+            sum += num;
+        }
+        sum
+    }
 
     #[test]
     fn empty() {
