@@ -3,6 +3,43 @@
 //  The docs for the `std::fmt` module are a good place to start and look for examples:
 //  https://doc.rust-lang.org/std/fmt/index.html#write
 
+use std::error::Error;
+use std::fmt;
+
+pub trait Debug {
+    fn fmt(&self, f: &mut fmt::Formatter) -> std::fmt::Result;
+}
+
+pub trait Display {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result;
+}
+
+impl fmt::Display for TicketNewError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            TicketNewError::TitleError(message) => write!(f,"{}", message),
+            TicketNewError::DescriptionError(message) => write!(f, "{}", message),
+        }
+    }
+}
+
+impl fmt::Debug for TicketNewError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            TicketNewError::TitleError(message) => write!(f,"{}", message),
+            TicketNewError::DescriptionError(message) => write!(f,"{}", message)
+        }
+    }
+}
+
+impl Error for TicketNewError {
+    fn description(&self) -> &str {
+        match self {
+            TicketNewError::TitleError(_) => "Title error",
+            TicketNewError::DescriptionError(_) => "Description error",
+        }
+    }
+}
 enum TicketNewError {
     TitleError(String),
     DescriptionError(String),
@@ -13,7 +50,15 @@ enum TicketNewError {
 //   When the description is invalid, instead, it should use a default description:
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    let ticket = Ticket::new(title.clone(), description, status.clone());
+    match ticket {
+        Ok(ticket) => ticket,
+        Err(TicketNewError::TitleError(title)) => panic!("Title error: {}", title),
+        Err(TicketNewError::DescriptionError(description)) => {
+            let new_description = "Description not provided";
+            Ticket::new(title, new_description.to_string(), status).unwrap()
+        },
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -98,7 +143,7 @@ mod tests {
     #[test]
     fn display_is_correctly_implemented() {
         let ticket = Ticket::new("".into(), valid_description(), Status::ToDo);
-        assert_eq!(format!("{}", ticket.unwrap_err()), "Title cannot be empty");
+        assert_eq!(format!("{:?}", ticket.unwrap_err()), "Title cannot be empty");
     }
 
     assert_impl_one!(TicketNewError: std::error::Error);
