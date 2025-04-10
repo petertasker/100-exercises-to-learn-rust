@@ -4,7 +4,11 @@
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    fn squared(nums: &mut [i32]) {
+        for num in nums.iter_mut() {
+            *num = num.pow(2);
+        }
+    }
     #[test]
     fn empty() {
         let mut s = vec![];
