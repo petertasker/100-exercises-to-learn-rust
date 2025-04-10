@@ -1,3 +1,4 @@
+use std::vec::IntoIter;
 use ticket_fields::{TicketDescription, TicketTitle};
 
 // TODO: Let's start sketching our ticket store!
@@ -8,6 +9,15 @@ use ticket_fields::{TicketDescription, TicketTitle};
 //   You want to *delegate* the iteration to the `Vec<Ticket>` field in `TicketStore`.
 //   Look at the standard library documentation for `Vec` to find the right type
 //   to return from `into_iter`.
+
+impl IntoIterator for TicketStore {
+    type Item = Ticket;
+    type IntoIter = IntoIter<Ticket>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.into_iter()
+    }
+}
+
 #[derive(Clone)]
 pub struct TicketStore {
     tickets: Vec<Ticket>,
