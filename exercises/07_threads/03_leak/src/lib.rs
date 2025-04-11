@@ -6,7 +6,18 @@
 use std::thread;
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+    let mid_idx = v.len() / 2;
+    let static_ref: &'static mut [i32] = Box::leak(v.into_boxed_slice());
+    let (left, right) = static_ref.split_at_mut(mid_idx);
+
+    let left_summer = thread::spawn(move || left.iter().sum::<i32>());
+    let right_summer = thread::spawn(move || right.iter().sum::<i32>());
+
+    let left_sum = left_summer.join().unwrap();
+    let right_sum = right_summer.join().unwrap();
+
+    left_sum + right_sum
+
 }
 
 #[cfg(test)]
