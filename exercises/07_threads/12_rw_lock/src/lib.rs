@@ -1,7 +1,7 @@
 // TODO: Replace `Mutex` with `RwLock` in the `TicketStore` struct and
 //  all other relevant places to allow multiple readers to access the ticket store concurrently.
 use std::sync::mpsc::{sync_channel, Receiver, SyncSender, TrySendError};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, RwLock};
 
 use crate::data::{Ticket, TicketDraft};
 use crate::store::{TicketId, TicketStore};
@@ -26,7 +26,7 @@ impl TicketStoreClient {
         Ok(response_receiver.recv().unwrap())
     }
 
-    pub fn get(&self, id: TicketId) -> Result<Option<Arc<Mutex<Ticket>>>, OverloadedError> {
+    pub fn get(&self, id: TicketId) -> Result<Option<Arc<RwLock<Ticket>>>, OverloadedError> {
         let (response_sender, response_receiver) = sync_channel(1);
         self.sender
             .try_send(Command::Get {
@@ -55,7 +55,7 @@ enum Command {
     },
     Get {
         id: TicketId,
-        response_channel: SyncSender<Option<Arc<Mutex<Ticket>>>>,
+        response_channel: SyncSender<Option<Arc<RwLock<Ticket>>>>,
     },
 }
 
@@ -74,8 +74,8 @@ pub fn server(receiver: Receiver<Command>) {
                 id,
                 response_channel,
             }) => {
-                let ticket = store.get(id);
-                let _ = response_channel.send(ticket);
+                let ticket = store.get(id).unwrap();
+                let _ = response_channel.send(Option::from(ticket));
             }
             Err(_) => {
                 // There are no more senders, so we can safely break
