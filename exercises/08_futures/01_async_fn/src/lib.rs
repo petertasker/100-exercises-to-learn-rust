@@ -31,8 +31,6 @@ pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
             }
         });
     }
-
-
 }
 
 #[cfg(test)]
